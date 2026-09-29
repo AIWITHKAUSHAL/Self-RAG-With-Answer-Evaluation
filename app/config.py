@@ -7,6 +7,11 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def settings() -> dict:
+    """Load server-side EURI settings, preserving existing environment values.
+
+    Returns the API key, base URL, and model name. The result contains a secret
+    and must not be returned directly by an HTTP route or written to a trace.
+    """
     # Reload on each live run so adding a local key needs no server restart.
     load_dotenv(ROOT / ".env", override=False)
     return {

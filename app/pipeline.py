@@ -14,6 +14,21 @@ ABSTENTION = "I couldn't produce a sufficiently supported answer within the retr
 
 
 def run_pipeline(request: QueryRequest, provider: Provider | None = None, retriever: Retriever | None = None) -> dict:
+    """Run retrieval, reflection, and correction within the requested retry budget.
+
+    Args:
+        request: Original question, provider mode, and bounded run settings.
+        provider: Optional injected implementation; otherwise chosen by mode.
+        retriever: Optional injected index; otherwise uses the bundled corpus.
+
+    Returns:
+        A supported answer or abstention, with sources, evaluations, events,
+        and attempt metadata. At most max_retries + 1 attempts are executed.
+
+    Raises:
+        ProviderError: If provider configuration or a model call fails. These
+            failures propagate without promoting a rejected draft to an answer.
+    """
     started = perf_counter()
     provider = provider if provider is not None else EuriProvider() if request.mode == "live" else DemoProvider()
     retriever = retriever if retriever is not None else Retriever()
@@ -21,9 +36,11 @@ def run_pipeline(request: QueryRequest, provider: Provider | None = None, retrie
     attempts, events = [], []
 
     def event(stage: str, attempt: int, message: str):
+        """Append a stage event with its attempt number and elapsed milliseconds."""
         events.append({"stage": stage, "attempt": attempt, "message": message, "elapsed_ms": round((perf_counter() - started) * 1000)})
 
     def finish(status: str, answer: str, sources: list) -> dict:
+        """Record the terminal event and assemble the answer and diagnostic trace."""
         event("end", len(attempts), "Supported answer accepted." if status == "accepted" else "Retry budget exhausted; abstained.")
         return {
             "status": status, "question": request.question, "answer": answer,

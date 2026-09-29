@@ -11,6 +11,11 @@ from app.pipeline import run_pipeline
 
 
 def main():
+    """Embed three offline traces and current source files in the HTML explorer.
+
+    Normalizes runtime timings and escapes script-sensitive characters before
+    writing docs/architecture_visualizer.html from the maintained template.
+    """
     scenarios = {
         "first": run_pipeline(QueryRequest(question="What is the refund policy?")),
         "correction": run_pipeline(QueryRequest(question="Does Northstar Academy guarantee a job or salary?", correction_demo=True)),

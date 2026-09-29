@@ -13,6 +13,11 @@ from app.providers import ProviderError
 
 
 def main():
+    """Run three scenarios in the selected mode and save their actual JSON traces.
+
+    Exit with status 1 on a provider failure or an unexpected scenario outcome.
+    Live executions require a configured key and consume EURI API quota.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode", choices=["demo", "live"], default="demo")
     args = parser.parse_args()

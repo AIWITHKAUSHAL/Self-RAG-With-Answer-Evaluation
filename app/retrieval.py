@@ -11,11 +11,19 @@ STOP_WORDS = set("a an the is are was were to of in on at for and or i my me it 
 
 
 def tokens(text: str) -> list[str]:
+    """Extract lowercase ASCII alphanumeric tokens, excluding configured stopwords."""
     return [word for word in re.findall(r"[a-z0-9]+", text.lower()) if word not in STOP_WORDS]
 
 
 class Retriever:
+    """Rank short local passages using BM25 over their titles and content."""
+
     def __init__(self, documents: list[Document] | None = None):
+        """Index supplied documents, or load the bundled corpus when given None.
+
+        An explicitly empty list creates an empty index. Duplicate document IDs
+        raise ValueError because citations must identify a unique passage.
+        """
         self.documents = documents if documents is not None else [
             Document(**item) for item in json.loads((ROOT / "data/knowledge_base.json").read_text())
         ]
@@ -26,6 +34,11 @@ class Retriever:
         self.average = sum(self.lengths) / max(1, len(self.lengths)) or 1
 
     def search(self, query: str, top_k: int) -> list[dict]:
+        """Return up to top_k positive-score hits ordered by descending BM25 score.
+
+        Each hit contains the Document under ``document`` and its rounded
+        retrieval ``score``. Empty or unmatched corpora return an empty list.
+        """
         ranked = []
         for doc, counts, length in zip(self.documents, self.counts, self.lengths):
             score = 0.0

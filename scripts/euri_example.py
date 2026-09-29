@@ -18,6 +18,7 @@ client = OpenAI(
 
 
 def main():
+    """Request an ocean haiku from the configured live EURI client and print it."""
     response = client.chat.completions.create(
         model="gemini-3.5-flash-lite",
         messages=[

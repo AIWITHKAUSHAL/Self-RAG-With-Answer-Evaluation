@@ -9,6 +9,7 @@ from app.providers import EuriProvider, ProviderError
 
 
 def provider_with_response(raw):
+    """Build a provider with a fixed chat response, bypassing credentials and the SDK."""
     provider = object.__new__(EuriProvider)
     provider._chat = lambda system, payload: raw
     return provider
@@ -20,16 +21,19 @@ def provider_with_response(raw):
     '{"answer_relevance": 1, "grounding": 1, "supported": "yes", "feedback": "ok", "unsupported_claims": []}',
 ])
 def test_bad_judge_output_fails_closed(raw):
+    """Verify malformed or schema-invalid judgments raise a sanitized provider error."""
     with pytest.raises(ProviderError, match="invalid grading format"):
         provider_with_response(raw)._json("audit", {}, Evaluation)
 
 
 def test_fenced_valid_json_is_parsed():
+    """Verify a valid judgment remains parseable when wrapped in Markdown fences."""
     raw = '```json\n{"answer_relevance": 1, "grounding": 0.9, "supported": true, "feedback": "ok", "unsupported_claims": []}\n```'
     assert provider_with_response(raw)._json("audit", {}, Evaluation).supported
 
 
 def test_missing_and_duplicate_document_grades_rejected():
+    """Reject grade batches with absent, unknown, or duplicate document IDs."""
     doc = Document(id="known", title="Test", text="Evidence")
     for raw in ['{"grades": []}', '{"grades":[{"document_id":"unknown","relevance":1,"reason":"ok"}]}',
                 '{"grades":[{"document_id":"known","relevance":1,"reason":"ok"},{"document_id":"known","relevance":1,"reason":"ok"}]}']:
@@ -38,13 +42,16 @@ def test_missing_and_duplicate_document_grades_rejected():
 
 
 def test_live_client_uses_exact_requested_model_and_server_key(monkeypatch):
+    """Check EURI client arguments and model selection using a fake SDK client."""
     import app.providers as providers
     seen = {}
     monkeypatch.setattr(providers, "settings", lambda: {"api_key": "test-secret", "base_url": "https://api.euron.one/api/v1/euri", "model": "gemini-3.5-flash-lite"})
     def create(**kwargs):
+        """Capture completion arguments and return a minimal successful SDK response."""
         seen["request"] = kwargs
         return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content="Answer"), finish_reason="stop")])
     def client(**kwargs):
+        """Capture initialization arguments and expose the fake completion method."""
         seen["client"] = kwargs
         return SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
     monkeypatch.setattr(providers, "OpenAI", client)
@@ -56,9 +63,11 @@ def test_live_client_uses_exact_requested_model_and_server_key(monkeypatch):
 
 
 def test_sdk_error_body_is_not_exposed():
+    """Verify sensitive SDK error details are omitted from the outward-facing error."""
     provider = object.__new__(EuriProvider)
     provider.model = "gemini-3.5-flash-lite"
     def fail(**kwargs):
+        """Raise a simulated SDK authentication error containing private response data."""
         raise AuthenticationError("sensitive-provider-body", response=httpx.Response(401, request=httpx.Request("POST", "https://example.com")), body={"secret": "do-not-show"})
     provider.client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=fail)))
     with pytest.raises(ProviderError) as error:
@@ -69,6 +78,7 @@ def test_sdk_error_body_is_not_exposed():
 
 
 def test_missing_key_has_actionable_error(monkeypatch):
+    """Verify a missing server key produces configuration guidance before client use."""
     monkeypatch.setattr("app.providers.settings", lambda: {"api_key": ""})
     with pytest.raises(ProviderError, match="EURI_API_KEY"):
         EuriProvider()

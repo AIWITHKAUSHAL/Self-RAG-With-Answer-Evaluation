@@ -7,6 +7,11 @@ from app.providers import ProviderError
 
 
 def main():
+    """Parse CLI options, run Self-RAG, and print its JSON trace.
+
+    Provider failures terminate the command with exit status 1 and a sanitized
+    message; argument validation is handled by argparse and QueryRequest.
+    """
     parser = argparse.ArgumentParser(description="Self-RAG demo / live EURI runner")
     parser.add_argument("question", nargs="?", default="What is the refund policy?")
     parser.add_argument("--mode", choices=["demo", "live"], default="demo")

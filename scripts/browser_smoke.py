@@ -8,6 +8,11 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def main():
+    """Check playground and explorer interactions in installed headless Chrome.
+
+    Requires a running local server. Saves desktop and mobile screenshots to
+    artifacts/browser and raises on failed assertions or JavaScript page errors.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", default="http://127.0.0.1:8000")
     args = parser.parse_args()
