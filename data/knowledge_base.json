@@ -1,0 +1,32 @@
+[
+  {
+    "id": "refund-policy",
+    "title": "Refunds & cancellations",
+    "text": "Northstar Academy offers a full course refund within 7 calendar days of purchase, provided the learner has completed less than 20% of the course. To request a refund, email support@northstar.example with the order ID. Refunds are processed within 5 to 10 business days after approval. After the 7-day window, course fees are non-refundable."
+  },
+  {
+    "id": "certificate-policy",
+    "title": "Certificate requirements",
+    "text": "To earn the Northstar Academy AI Engineering certificate, a learner must complete all modules, score at least 70% on the final assessment, and submit a passing capstone project. A certificate is issued within 3 business days after all requirements are met. Attendance alone does not qualify a learner for a certificate."
+  },
+  {
+    "id": "career-support",
+    "title": "Career support & placement",
+    "text": "Northstar Academy provides resume reviews, two mock interviews, and access to its job board for AI Engineering learners. Northstar Academy does not guarantee employment, placement, or any salary amount. Career support is available for 6 months after course completion."
+  },
+  {
+    "id": "course-schedule",
+    "title": "AI Engineering course schedule",
+    "text": "The Northstar Academy AI Engineering course lasts 12 weeks. Live classes take place on Saturday and Sunday from 7 PM to 9 PM IST. Class recordings are available within 24 hours, and learners retain access to course materials for 12 months after enrollment."
+  },
+  {
+    "id": "capstone-policy",
+    "title": "Capstone project & resubmission",
+    "text": "The Northstar Academy capstone requires a working RAG application, a public GitHub repository with a README, and a 5 to 8 minute explanation video. A capstone passes with a score of at least 70 out of 100. Learners may resubmit a failed capstone up to 2 times within 30 days of receiving feedback."
+  },
+  {
+    "id": "support-policy",
+    "title": "Learner support",
+    "text": "Northstar Academy learner support is available Monday to Friday from 10 AM to 6 PM IST at support@northstar.example. The support team normally responds within 2 business days. Learners can request a course pause of up to 14 days by contacting support before the pause begins."
+  }
+]

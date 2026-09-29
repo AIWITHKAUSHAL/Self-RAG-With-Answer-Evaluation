@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#151621"><title>Self-RAG Studio · Answer with evidence</title>
+  <link rel="stylesheet" href="/static/style.css"><script src="/static/app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="/"><span class="brand-mark">S<span>↗</span></span><span>Self-RAG<span class="brand-sub">STUDIO / 01</span></span></a>
+    <div class="nav-label">WORKSPACE</div>
+    <nav aria-label="Main navigation"><a class="nav-item active" href="/">◈ <span>Playground</span><span class="nav-count">01</span></a><a class="nav-item" href="/architecture">⌘ <span>Architecture explorer</span><span>↗</span></a><a class="nav-item" href="#knowledge">▤ <span>Knowledge base</span><span id="doc-count">6</span></a><a class="nav-item" href="/docs" target="_blank" rel="noopener">⌁ <span>API documentation</span><span>↗</span></a></nav>
+    <div class="sidebar-note"><span class="tiny-label">THE IDEA</span><p>A better answer starts<br>with a second look.</p><div class="mini-loop">Retrieve <span>→</span> Reflect <span>↻</span></div></div>
+    <div class="sidebar-bottom"><span class="status-dot"></span> LOCAL WORKSPACE <span class="version">v1.0</span></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><div><span class="muted">Workspace</span><span class="slash">/</span> Playground</div><div class="topbar-right"><span id="connection" class="connection">Connecting…</span><span class="avatar">KA</span></div></header>
+    <main>
+      <div class="page-heading"><div><div class="eyebrow">RETRIEVAL. REFLECTION. RELIABILITY.</div><h1>Answer with evidence<span>.</span></h1><p>A RAG agent that checks its work. Follow every retrieval, evaluation, and retry.</p></div><a class="outline-link" href="/architecture">Explore the architecture <span>↗</span></a></div>
+      <section class="pipeline-strip" aria-label="Workflow"><div><b>01</b><span>Retrieve</span><small>Find context</small></div><i>→</i><div><b>02</b><span>Grade</span><small>Filter relevance</small></div><i>→</i><div><b>03</b><span>Generate</span><small>Draft an answer</small></div><i>→</i><div><b>04</b><span>Evaluate</span><small>Check the evidence</small></div><i>→</i><div class="loop-step"><b>↻</b><span>Accept or retry</span><small>Improve before returning</small></div></section>
+      <div class="main-grid">
+        <div class="left-column">
+          <section class="card composer"><div class="section-title"><h2>Ask your knowledge base</h2><span class="tag">PLAYGROUND</span></div><p class="section-description">Explore the sample Northstar Academy policy documents.</p>
+            <form id="query-form"><label for="question">Your question</label><textarea id="question" maxlength="1000" minlength="3" required placeholder="What is the refund policy?">What is the refund policy?</textarea>
+              <div class="suggestions"><button type="button" data-example="refund">↗ Refund policy</button><button type="button" data-example="correction">↻ Trigger a correction</button><button type="button" data-example="unknown">? Missing evidence</button></div>
+              <div class="settings-row"><div><label for="mode">Run mode</label><select id="mode"><option value="demo">Offline demo · no API key</option><option value="live">Live · EURI / Gemini</option></select></div><div><label for="max-retries">Max retries</label><select id="max-retries"><option value="0">0 retries</option><option value="1">1 retry</option><option value="2" selected>2 retries</option><option value="3">3 retries</option><option value="4">4 retries</option></select></div></div>
+              <div class="correction-option"><label class="check-label"><input type="checkbox" id="correction-demo"><span>Correction demo <small>Inject one unsupported first draft to demonstrate recovery.</small></span></label><span class="info-icon" title="This is a deliberate teaching fault, not a claim that the model naturally failed.">i</span></div>
+              <div id="mode-note" class="mode-note">Deterministic sample demo. No model calls or API charges.</div>
+              <div class="run-row"><span><span class="status-dot"></span> <span id="model-name">gemini-3.5-flash-lite</span><small>Configured live model</small></span><button class="primary-button" id="run-button" type="submit">Run Self-RAG <span>↗</span></button></div>
+            </form>
+            <div id="error" class="error hidden" role="alert"></div>
+          </section>
+          <section class="card answer-card" aria-live="polite"><div class="section-title"><h2>The answer</h2><span id="answer-badge" class="tag">AWAITING A QUESTION</span></div><div id="answer-empty" class="empty-answer"><span class="empty-icon">✧</span><h3>Evidence first. Answer second.</h3><p>Run a question to see a checked answer,<br>its source documents, and the agent’s decisions.</p></div><div id="answer-content" class="hidden"><p id="answer-text"></p><div id="sources" class="sources"></div><div class="answer-footer"><span id="answer-meta"></span><button type="button" id="download" class="text-button">Download trace ↓</button></div></div></section>
+        </div>
+        <section class="card trace-card"><div class="section-title"><h2><span class="purple-dot"></span> Agent activity</h2><span id="trace-badge" class="tag">READY</span></div><p class="section-description">An inspectable record of the agent’s decisions.</p>
+          <div class="metrics"><div><span>ATTEMPTS</span><strong id="metric-attempts">—</strong></div><div><span>RELEVANCE</span><strong id="metric-relevance">—</strong></div><div><span>GROUNDING</span><strong id="metric-grounding">—</strong></div></div>
+          <div id="activity" class="activity"><div class="activity-placeholder"><span class="activity-line"></span><div><h3>Ready when you are</h3><p>Your retrieval and evaluation trace will appear here after the run completes.</p></div></div></div>
+          <div class="trace-bottom"><span>↻</span><div><b>A built-in stopping point</b><p>At most <span id="attempt-limit">3</span> attempts. If evidence is still insufficient, the agent abstains.</p></div></div>
+        </section>
+      </div>
+      <section id="knowledge" class="knowledge-section"><div class="section-title"><div><div class="eyebrow">THE SOURCE OF TRUTH</div><h2>Inside the knowledge base</h2></div><span class="tag">6 SAMPLE DOCUMENTS</span></div><p class="section-description">Fictional teaching data. Click a document to inspect the evidence.</p><div id="documents" class="document-grid"></div></section>
+      <footer><span>SELF-RAG STUDIO <span class="footer-separator">/</span> Built to question the first answer.</span><span>EURI + Gemini <span class="footer-separator">·</span> BM25 retrieval</span></footer>
+    </main>
+  </div>
+</body>
+</html>
