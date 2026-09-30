@@ -7,11 +7,12 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from app.models import QueryRequest
-from app.pipeline import run_pipeline
+from app.pipeline import ABSTENTION, ANSWER_THRESHOLD, DOCUMENT_THRESHOLD, GROUNDING_THRESHOLD, UNSUPPORTED_DEMO_DRAFT, run_pipeline
+from app.retrieval import STOP_WORDS
 
 
 def main():
-    """Embed three offline traces and current source files in the HTML explorer.
+    """Embed three offline traces, engine constants, and source files in the HTML explorer.
 
     Normalizes runtime timings and escapes script-sensitive characters before
     writing docs/architecture_visualizer.html from the maintained template.
@@ -26,7 +27,15 @@ def main():
         result["duration_ms"] = 0
         for event in result["events"]:
             event["elapsed_ms"] = 0
-    data = {"scenarios": scenarios, "sources": {name: (ROOT / name).read_text() for name in [
+    # The in-browser offline engine reuses these so it cannot drift from the Python pipeline.
+    engine = {
+        "knowledge_base": json.loads((ROOT / "data/knowledge_base.json").read_text()),
+        "stop_words": sorted(STOP_WORDS),
+        "thresholds": {"document_relevance": DOCUMENT_THRESHOLD, "answer_relevance": ANSWER_THRESHOLD, "grounding": GROUNDING_THRESHOLD},
+        "unsupported_demo_draft": UNSUPPORTED_DEMO_DRAFT,
+        "abstention": ABSTENTION,
+    }
+    data = {"scenarios": scenarios, "engine": engine, "sources": {name: (ROOT / name).read_text() for name in [
         "app/models.py", "app/retrieval.py", "app/providers.py", "app/pipeline.py", "app/main.py",
     ]}}
     template = (ROOT / "scripts/visualizer_template.html").read_text()

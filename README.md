@@ -141,9 +141,12 @@ Open [`docs/architecture_visualizer.html`](docs/architecture_visualizer.html) di
 - Clickable SVG nodes with inputs, outputs, explanations, and actual source snapshots.
 - Play/pause, next/back, reset, and playback speed controls.
 - Three scenarios captured from actual offline pipeline execution.
+- **Run your own question** in two modes, replayed through the same diagram as "04 · Your run":
+  - **Offline · in-browser:** a JavaScript port of the BM25 retriever, offline provider, and retry loop. Works even when the file is opened directly; a test verifies its traces are identical to the Python pipeline.
+  - **Online · EURI live:** calls `POST /api/query` with `mode: "live"`. Available only when the page is served at `/architecture` and `EURI_API_KEY` is configured; the key never reaches the browser.
 - Per-attempt retrieval counts, grades, grounding, final outcome, and raw JSON.
 - Keyboard-accessible nodes and controls; responsive layout.
-- No API keys, external scripts, or network calls required by the explorer.
+- No API keys or external scripts; offline mode makes no network calls.
 
 Rebuild embedded source and traces after code changes:
 
@@ -151,7 +154,7 @@ Rebuild embedded source and traces after code changes:
 python scripts/build_visualizer.py
 ```
 
-The explorer is a teaching playback of recorded **offline** runs; use the playground for fresh live executions. CI checks that the generated explorer matches the current source.
+The three scenario buttons replay recorded **offline** runs; the runner bar executes fresh offline or online runs. CI checks that the generated explorer matches the current source.
 
 ## API and CLI
 
